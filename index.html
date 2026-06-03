@@ -6,270 +6,368 @@
     <title>Redis Radar — Private Preview</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --redis-red: #DC382D; }
-        .accent-redis { accent-color: #DC382D; }
         .scrollbar-thin::-webkit-scrollbar { width: 5px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; }
         .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-        #downloadBtn:not(:disabled):hover { filter: brightness(0.92); }
+
+        .install-card { transition: all 0.15s ease; }
+        .install-card.selected {
+            border-color: #DC382D;
+            background-color: #fff5f5;
+            box-shadow: 0 0 0 3px rgba(220,56,45,0.12);
+        }
+        .install-card:not(.selected):hover { border-color: #94a3b8; background-color: #f8fafc; }
+
+        .step-block { transition: opacity 0.2s ease; }
+        .step-block.locked { opacity: 0.45; pointer-events: none; }
+
+        .artifact-row { transition: all 0.15s ease; }
+        .dl-btn { transition: all 0.15s ease; }
+        .dl-btn:not(:disabled):hover { filter: brightness(0.9); }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
 
-    <!-- Header -->
-    <header class="bg-white border-b border-slate-200">
-        <div class="max-w-3xl mx-auto px-6 py-4 flex items-center gap-3">
-            <svg width="80" height="28" viewBox="0 0 80 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <text x="0" y="22" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="22" fill="#DC382D">Redis</text>
-            </svg>
-            <span class="text-slate-400 text-lg font-light">|</span>
-            <span class="text-slate-700 font-semibold text-base tracking-wide">Radar</span>
-            <span class="ml-1 bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide">Private Preview</span>
+<!-- ── Header ─────────────────────────────────────────────── -->
+<header class="bg-white border-b border-slate-200">
+    <div class="max-w-2xl mx-auto px-6 py-4 flex items-center gap-3">
+        <span class="text-[#DC382D] font-extrabold text-xl tracking-tight">Redis</span>
+        <span class="text-slate-300 text-lg">|</span>
+        <span class="text-slate-700 font-semibold">Radar</span>
+        <span class="ml-1 bg-amber-100 text-amber-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Private Preview</span>
+    </div>
+</header>
+
+<!-- ── Main ───────────────────────────────────────────────── -->
+<main class="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
+
+    <!-- Welcome banner -->
+    <div class="text-center px-4 py-2">
+        <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            You're invited
         </div>
-    </header>
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 leading-tight">
+            Welcome to Redis Radar<br>
+            <span class="text-[#DC382D]">Private Preview</span>
+        </h1>
+        <p class="text-slate-500 text-sm sm:text-base max-w-md mx-auto leading-relaxed">
+            Redis Radar is now available as part of the <strong class="text-slate-700">Redis Software</strong> private preview program. Follow the steps below to access your artifacts.
+        </p>
+    </div>
 
-    <!-- Main -->
-    <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+    <!-- Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 divide-y divide-slate-100">
 
-            <!-- Banner -->
-            <div class="bg-[#DC382D] px-8 py-7">
-                <h1 class="text-2xl font-bold text-white mb-1">Access Radar Preview Artifacts</h1>
-                <p class="text-red-100 text-sm leading-relaxed">
-                    This page grants access to confidential preview materials. Please review the terms, provide your work email, and accept the agreement to proceed.
-                </p>
+        <!-- ── Step 1: Installation ──────────────────────────── -->
+        <div class="px-6 sm:px-8 py-7">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-7 h-7 rounded-full bg-[#DC382D] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</div>
+                <h2 class="font-semibold text-slate-800 text-base">Select your installation method</h2>
             </div>
 
-            <div class="px-8 py-8 space-y-6">
+            <div class="grid grid-cols-2 gap-3" id="installCards">
 
-                <!-- T&C Box -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="text-sm font-semibold text-slate-700">Terms &amp; Conditions</label>
-                        <span class="text-xs text-slate-400">Scroll to read</span>
+                <!-- K8s -->
+                <button type="button" data-install="k8s"
+                    class="install-card text-left border-2 border-slate-200 rounded-xl p-4 cursor-pointer bg-white"
+                    onclick="selectInstall('k8s')">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+                        </svg>
                     </div>
-                    <div id="tncBox" class="border border-slate-200 rounded-xl bg-slate-50 p-5 h-60 overflow-y-auto text-sm text-slate-600 leading-relaxed space-y-4 scrollbar-thin">
+                    <p class="font-semibold text-slate-800 text-sm">Kubernetes</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Helm chart deployment</p>
+                </button>
 
-                        <p>Before accessing the preview, please review the following terms:</p>
-
-                        <p>By clicking &#8220;Accept&#8221; or by accessing, downloading, installing, or using this Preview in any way, you acknowledge that you have read, understood, and agree to be bound by the following terms.</p>
-
-                        <p>This Preview is provided under and governed by Section 3.2 (Previews) of the Redis Software Agreement (the &#8220;Agreement&#8221;). By accepting these terms, you confirm that you have the authority to bind your organization to the Agreement.</p>
-
+                <!-- RPM -->
+                <button type="button" data-install="rpm"
+                    class="install-card text-left border-2 border-slate-200 rounded-xl p-4 cursor-pointer bg-white"
+                    onclick="selectInstall('rpm')">
+                    <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center mb-3">
+                        <svg class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"/>
+                        </svg>
                     </div>
-                </div>
+                    <p class="font-semibold text-slate-800 text-sm">RHEL / RPM</p>
+                    <p class="text-xs text-slate-400 mt-0.5">RPM package install</p>
+                </button>
 
-                <!-- Email field -->
-                <div>
-                    <label for="email" class="block text-sm font-semibold text-slate-700 mb-1.5">
-                        Work Email <span class="font-normal text-slate-400">(required)</span>
-                    </label>
-                    <input
-                        type="email"
-                        id="email"
-                        placeholder="name@company.com"
-                        autocomplete="email"
-                        class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 placeholder-slate-400
-                               focus:outline-none focus:ring-2 focus:ring-[#DC382D] focus:border-transparent transition"
-                    >
-                    <p id="emailError" class="text-xs text-red-500 mt-1 hidden">Please enter a valid work email address.</p>
-                </div>
+            </div>
+        </div>
 
-                <!-- Checkbox -->
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <label class="flex items-start gap-3 cursor-pointer select-none">
-                        <input
-                            type="checkbox"
-                            id="agree"
-                            class="mt-0.5 h-4 w-4 accent-redis rounded"
-                        >
-                        <span class="text-sm text-slate-700 leading-relaxed">
-                            I have read and agree to the <button type="button" onclick="scrollToTerms()" class="text-[#DC382D] underline underline-offset-2 hover:text-red-700 font-medium">Terms &amp; Conditions</button>
-                            above. I understand that this is confidential preview software and must not be shared with third parties.
-                        </span>
-                    </label>
-                </div>
+        <!-- ── Step 2: Terms ─────────────────────────────────── -->
+        <div class="px-6 sm:px-8 py-7 step-block locked" id="step2">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-7 h-7 rounded-full bg-[#DC382D] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</div>
+                <h2 class="font-semibold text-slate-800 text-base">Review &amp; accept the terms</h2>
+            </div>
 
-                <!-- Artifact downloads (unlocked after agreement) -->
-                <div id="artifactSection">
-                    <p class="text-sm font-semibold text-slate-700 mb-3">Preview Artifacts</p>
-                    <div class="space-y-2.5" id="artifactList">
+            <div id="tncBox"
+                class="border border-slate-200 rounded-xl bg-slate-50 p-5 h-44 overflow-y-auto text-sm text-slate-600 leading-relaxed space-y-3 scrollbar-thin mb-4">
+                <p>Before accessing the preview, please review the following terms:</p>
+                <p>By clicking &#8220;Accept&#8221; or by accessing, downloading, installing, or using this Preview in any way, you acknowledge that you have read, understood, and agree to be bound by the following terms.</p>
+                <p>This Preview is provided under and governed by Section 3.2 (Previews) of the Redis Software Agreement (the &#8220;Agreement&#8221;). By accepting these terms, you confirm that you have the authority to bind your organization to the Agreement.</p>
+            </div>
 
-                        <!-- Artifact 1: Binary package -->
-                        <div class="flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-medium text-slate-800 truncate">mcm-v0.3.0.tar.gz</p>
-                                    <p class="text-xs text-slate-400">Multi-Cluster Manager · 144 MB</p>
-                                </div>
-                            </div>
-                            <button data-url="./downloads/mcm-v0.3.0.tar.gz" data-name="mcm-v0.3.0.tar.gz"
-                                class="artifact-btn flex-shrink-0 ml-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#DC382D] text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                                disabled>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                Download
-                            </button>
-                        </div>
+            <label class="flex items-start gap-3 cursor-pointer select-none">
+                <input type="checkbox" id="agree"
+                    class="mt-0.5 h-4 w-4 rounded"
+                    style="accent-color:#DC382D"
+                    onchange="onAgreeChange()">
+                <span class="text-sm text-slate-700 leading-relaxed">
+                    I have read and agree to the
+                    <button type="button" onclick="document.getElementById('tncBox').scrollIntoView({behavior:'smooth',block:'center'})"
+                        class="text-[#DC382D] underline underline-offset-2 font-medium hover:text-red-700">terms above</button>.
+                    I confirm I have the authority to bind my organization to this agreement.
+                </span>
+            </label>
+        </div>
 
-                        <!-- Artifact 2: K8s guide -->
-                        <div class="flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-[#DC382D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-medium text-slate-800 truncate">Redis_Radar_Private_Preview_Guide_K8s.pdf</p>
-                                    <p class="text-xs text-slate-400">Kubernetes Setup Guide · PDF</p>
-                                </div>
-                            </div>
-                            <button data-url="./downloads/Redis_Radar_Private_Preview_Guide_K8s.pdf" data-name="Redis_Radar_Private_Preview_Guide_K8s.pdf"
-                                class="artifact-btn flex-shrink-0 ml-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#DC382D] text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                                disabled>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                Download
-                            </button>
-                        </div>
+        <!-- ── Step 3: Email + Downloads ─────────────────────── -->
+        <div class="px-6 sm:px-8 py-7 step-block locked" id="step3">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-7 h-7 rounded-full bg-[#DC382D] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">3</div>
+                <h2 class="font-semibold text-slate-800 text-base">Enter your email &amp; download</h2>
+            </div>
 
-                        <!-- Artifact 3: RPM guide -->
-                        <div class="flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-[#DC382D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-medium text-slate-800 truncate">Redis_Radar_Private_Preview_Guide_RPM.pdf</p>
-                                    <p class="text-xs text-slate-400">RPM Setup Guide · PDF</p>
-                                </div>
-                            </div>
-                            <button data-url="./downloads/Redis_Radar_Private_Preview_Guide_RPM.pdf" data-name="Redis_Radar_Private_Preview_Guide_RPM.pdf"
-                                class="artifact-btn flex-shrink-0 ml-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#DC382D] text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                                disabled>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                Download
-                            </button>
-                        </div>
+            <!-- Email -->
+            <div class="mb-6">
+                <label for="email" class="block text-sm font-medium text-slate-700 mb-1.5">Work email</label>
+                <input type="email" id="email" placeholder="name@company.com" autocomplete="email"
+                    class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 placeholder-slate-400
+                           focus:outline-none focus:ring-2 focus:border-transparent transition"
+                    style="--tw-ring-color:#DC382D"
+                    oninput="onEmailInput()">
+                <p id="emailError" class="text-xs text-red-500 mt-1 hidden">Please enter a valid email address.</p>
+            </div>
 
-                    </div>
+            <!-- K8s artifacts -->
+            <div id="k8s-artifacts" class="hidden space-y-2.5">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Kubernetes Artifacts</p>
 
-                    <!-- Post-unlock message -->
-                    <div id="successMsg" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
-                        <div class="flex items-start gap-2.5">
-                            <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                <div class="artifact-row flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
                             </svg>
-                            <div>
-                                <p class="text-sm font-semibold text-green-800">Access granted</p>
-                                <p class="text-xs text-green-700 mt-0.5">
-                                    Thank you for joining the Radar Private Preview. Questions? Reach out to
-                                    <a href="mailto:preview@redis.com" class="underline">preview@redis.com</a>
-                                </p>
-                            </div>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-slate-800 truncate">mcm-v0.3.0.tar.gz</p>
+                            <p class="text-xs text-slate-400">Multi-Cluster Manager package · 144 MB</p>
                         </div>
                     </div>
+                    <button class="dl-btn flex-shrink-0 ml-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#DC382D] text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                        data-url="./downloads/mcm-v0.3.0.tar.gz" data-name="mcm-v0.3.0.tar.gz" data-install="k8s" disabled>
+                        <svg class="w-4 h-4 btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span class="btn-label">Download</span>
+                    </button>
                 </div>
 
-                <p class="text-center text-xs text-slate-400">
-                    Need help? Contact <a href="mailto:preview@redis.com" class="text-[#DC382D] hover:underline">preview@redis.com</a>
-                </p>
-
+                <div class="artifact-row flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#DC382D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-slate-800 truncate">Redis_Radar_Private_Preview_Guide_K8s.pdf</p>
+                            <p class="text-xs text-slate-400">Kubernetes setup guide</p>
+                        </div>
+                    </div>
+                    <button class="dl-btn flex-shrink-0 ml-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#DC382D] text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                        data-url="./downloads/Redis_Radar_Private_Preview_Guide_K8s.pdf" data-name="Redis_Radar_Private_Preview_Guide_K8s.pdf" data-install="k8s" disabled>
+                        <svg class="w-4 h-4 btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span class="btn-label">Download</span>
+                    </button>
+                </div>
             </div>
+
+            <!-- RPM artifacts -->
+            <div id="rpm-artifacts" class="hidden space-y-2.5">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">RHEL / RPM Artifacts</p>
+
+                <div class="artifact-row flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-slate-800 truncate">mcm-v0.3.0.tar.gz</p>
+                            <p class="text-xs text-slate-400">Multi-Cluster Manager package · 144 MB</p>
+                        </div>
+                    </div>
+                    <button class="dl-btn flex-shrink-0 ml-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#DC382D] text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                        data-url="./downloads/mcm-v0.3.0.tar.gz" data-name="mcm-v0.3.0.tar.gz" data-install="rpm" disabled>
+                        <svg class="w-4 h-4 btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span class="btn-label">Download</span>
+                    </button>
+                </div>
+
+                <div class="artifact-row flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-slate-50">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#DC382D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-slate-800 truncate">Redis_Radar_Private_Preview_Guide_RPM.pdf</p>
+                            <p class="text-xs text-slate-400">RHEL / RPM setup guide</p>
+                        </div>
+                    </div>
+                    <button class="dl-btn flex-shrink-0 ml-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#DC382D] text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                        data-url="./downloads/Redis_Radar_Private_Preview_Guide_RPM.pdf" data-name="Redis_Radar_Private_Preview_Guide_RPM.pdf" data-install="rpm" disabled>
+                        <svg class="w-4 h-4 btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span class="btn-label">Download</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Success message -->
+            <div id="successMsg" class="hidden mt-5 p-4 bg-green-50 border border-green-200 rounded-xl">
+                <div class="flex items-start gap-2.5">
+                    <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-semibold text-green-800">You're all set!</p>
+                        <p class="text-xs text-green-700 mt-0.5">
+                            Your download has started. Questions or feedback?
+                            <a href="mailto:preview@redis.com" class="underline">preview@redis.com</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </main>
+    </div>
 
-    <script>
-        // ─── Configuration ─────────────────────────────────────────────────────────
-        // Optional: set your Formspree endpoint to capture email submissions.
-        // Create a free form at https://formspree.io → paste the endpoint below.
-        // Example: 'https://formspree.io/f/xpwzabcd'
-        const TRACKING_ENDPOINT = '';
-        // ───────────────────────────────────────────────────────────────────────────
+    <p class="text-center text-xs text-slate-400 pb-4">
+        Redis Software Private Preview · <a href="mailto:preview@redis.com" class="hover:underline text-slate-500">preview@redis.com</a>
+    </p>
 
-        const checkbox   = document.getElementById('agree');
-        const emailInput = document.getElementById('email');
-        const emailError = document.getElementById('emailError');
-        const artifactBtns = () => document.querySelectorAll('.artifact-btn');
+</main>
 
-        function isValidEmail(v) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+<script>
+// ── Configuration ──────────────────────────────────────────────────────────────
+// To receive email notifications when someone downloads:
+// 1. Create a free Formspree form at https://formspree.io (sign up with maayan.agranat@redis.com)
+// 2. Create a new form, copy the endpoint (e.g. https://formspree.io/f/xpwzabcd)
+// 3. Paste it below
+const NOTIFY_ENDPOINT = ''; // e.g. 'https://formspree.io/f/xpwzabcd'
+// ──────────────────────────────────────────────────────────────────────────────
+
+let selectedInstall = null;
+let notified        = false;
+
+const emailInput = document.getElementById('email');
+const emailError = document.getElementById('emailError');
+const step2      = document.getElementById('step2');
+const step3      = document.getElementById('step3');
+
+function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+}
+
+// Step 1 — installation selection
+function selectInstall(type) {
+    selectedInstall = type;
+    document.querySelectorAll('.install-card').forEach(c => {
+        c.classList.toggle('selected', c.dataset.install === type);
+    });
+    step2.classList.remove('locked');
+    // Show/hide artifact sections
+    document.getElementById('k8s-artifacts').classList.toggle('hidden', type !== 'k8s');
+    document.getElementById('rpm-artifacts').classList.toggle('hidden', type !== 'rpm');
+    updateDownloadButtons();
+}
+
+// Step 2 — terms checkbox
+function onAgreeChange() {
+    const checked = document.getElementById('agree').checked;
+    step3.classList.toggle('locked', !checked);
+    updateDownloadButtons();
+}
+
+// Step 3 — email input
+function onEmailInput() {
+    const v = emailInput.value;
+    emailError.classList.toggle('hidden', !v || isValidEmail(v));
+    updateDownloadButtons();
+}
+
+function updateDownloadButtons() {
+    const ready = selectedInstall &&
+                  document.getElementById('agree').checked &&
+                  isValidEmail(emailInput.value);
+    document.querySelectorAll('.dl-btn').forEach(btn => {
+        btn.disabled = !ready || btn.classList.contains('done');
+    });
+}
+
+// Download handler
+document.addEventListener('click', async e => {
+    const btn = e.target.closest('.dl-btn');
+    if (!btn || btn.disabled || btn.classList.contains('done')) return;
+
+    const { url, name, install } = btn.dataset;
+    const email = emailInput.value.trim();
+
+    // Send notification email on first download
+    if (!notified && NOTIFY_ENDPOINT) {
+        notified = true;
+        try {
+            await fetch(NOTIFY_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                body: JSON.stringify({
+                    _subject: `[Radar Preview] ${email} downloaded for ${install.toUpperCase()}`,
+                    message:  `user ${email} downloaded private preview for ${install === 'k8s' ? 'K8s' : 'RPM'}`,
+                    email,
+                    installation: install,
+                    file: name,
+                    timestamp: new Date().toISOString(),
+                }),
+            });
+        } catch (err) {
+            console.warn('Notification failed:', err);
         }
+    }
 
-        function updateButtonState() {
-            const ok = checkbox.checked && isValidEmail(emailInput.value);
-            artifactBtns().forEach(btn => { btn.disabled = !ok; });
-        }
+    // Trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 
-        checkbox.addEventListener('change', updateButtonState);
-        emailInput.addEventListener('input', () => {
-            emailError.classList.toggle('hidden', !emailInput.value || isValidEmail(emailInput.value));
-            updateButtonState();
-        });
+    // Mark done
+    btn.classList.add('done');
+    btn.disabled = true;
+    btn.classList.replace('bg-[#DC382D]', 'bg-green-600');
+    btn.querySelector('.btn-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+    btn.querySelector('.btn-label').textContent = 'Done';
 
-        function scrollToTerms() {
-            document.getElementById('tncBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        let tracked = false;
-
-        async function handleArtifactClick(btn) {
-            const url  = btn.dataset.url;
-            const name = btn.dataset.name;
-
-            // Submit email once (on first download) if tracking is configured
-            if (!tracked && TRACKING_ENDPOINT) {
-                tracked = true;
-                try {
-                    await fetch(TRACKING_ENDPOINT, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                        body: JSON.stringify({
-                            email: emailInput.value.trim(),
-                            product: 'Redis Radar Private Preview',
-                            timestamp: new Date().toISOString(),
-                            agreed_to_terms: true,
-                        }),
-                    });
-                } catch (err) {
-                    console.warn('Email tracking failed:', err);
-                }
-            }
-
-            // Trigger download
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = name;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-            // Mark button as done
-            btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Downloading…';
-            btn.classList.replace('bg-[#DC382D]', 'bg-green-600');
-            btn.disabled = true;
-
-            document.getElementById('successMsg').classList.remove('hidden');
-        }
-
-        // Wire up all artifact buttons via event delegation
-        document.getElementById('artifactList').addEventListener('click', e => {
-            const btn = e.target.closest('.artifact-btn');
-            if (btn && !btn.disabled) handleArtifactClick(btn);
-        });
-    </script>
+    document.getElementById('successMsg').classList.remove('hidden');
+});
+</script>
 
 </body>
 </html>
